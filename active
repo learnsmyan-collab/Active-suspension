@@ -1,0 +1,13 @@
+m =8 %kg
+b = 10 % damping
+c= 5 %spring constant 
+
+G= 10000 %force gain
+kp= 10 %proportional gain
+kd=0.2 %derivative gain
+ki= 0.5 %intergal gain
+
+%distruabnce input 
+inputDataStrucutre.time  = (0:0.01:10)';
+inputDataStrucutre. signals(1).values = sin(inputDataStrucutre.time)+0.2*randn(size(inputDataStrucutre.time));
+inputDataStrucutre.signals(1).dimensions=1;
