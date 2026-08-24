@@ -1,0 +1,17 @@
+% Vehicle Suspension Model Initialization Script
+
+% --- Suspension Parameters ---
+ms = 250;      % Sprung mass (kg) - e.g., car body quarter mass
+cs = 45;       % Unsprung mass (kg) - e.g., wheel assembly (or substitute mu)
+ks = 15000;    % Suspension stiffness / spring constant (N/m)
+c = 1000;      % Damping coefficient (N s/m)
+b = 1000;      % Additional damping or coefficient, if used
+
+% --- Controller Parameters (PID) ---
+kp = 100;      % Proportional gain
+ki = 50;       % Integral gain
+kd = 10;       % Derivative gain
+
+% --- Road Input Parameters ---
+amplitude = 0.05; % Road bump amplitude (m)
+frequency = 2;    % Road bump frequency (rad/s or Hz depending on source block)
