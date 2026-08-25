@@ -1,13 +1,44 @@
-m =8 %kg
-b = 10 % damping
-c= 5 %spring constant 
+%==========================================================================
+% Project: Vehicle Dynamics & PID Control Integration
+% Description: Defines physical system parameters, controller gains, 
+%              and structured input signals for the Simulink plant model.
+% Author: Smyan Aggarwal
+% Date: 2026-07-05
+%==========================================================================
 
-G= 10000 %force gain
-kp= 10 %proportional gain
-kd=0.2 %derivative gain
-ki= 0.5 %intergal gain
+clear; clc;
 
-%distruabnce input 
-inputDataStrucutre.time  = (0:0.01:10)';
-inputDataStrucutre. signals(1).values = sin(inputDataStrucutre.time)+0.2*randn(size(inputDataStrucutre.time));
-inputDataStrucutre.signals(1).dimensions=1;
+% physical system setup
+m = 8;      % mass (kg)
+b = 10;     % damping coefficient
+c = 5;      % spring constant
+
+% controller gains & force tuning
+G  = 10000; % overall force gain
+kp = 10;    % proportional gain
+kd = 0.2;   % derivative gain
+ki = 0.5;   % integral gain
+
+% setup the disturbance input structure for simulink
+inputDataStrucutre.time = (0:0.01:10)';
+inputDataStrucutre.signals(1).values = sin(inputDataStrucutre.time);
+inputDataStrucutre.signals(1).dimensions = 1;
+
+% quick check to make sure everything actually loaded into memory
+required_vars = {'m', 'b', 'c', 'G', 'kp', 'kd', 'ki', 'inputDataStrucutre'};
+missing_vars = {};
+
+for i = 1:length(required_vars)
+    if ~evalin('base', sprintf('exist(''%s'', ''var'')', required_vars{i}))
+        missing_vars{end+1} = required_vars{i};
+    end
+end
+
+% print out status in the command window
+fprintf('\n--- Workspace Check ---\n');
+if isempty(missing_vars)
+    fprintf('all variables are loaded and ready to go for simulink.\n');
+else
+    fprintf('heads up, these variables are missing:\n');
+    disp(missing_vars);
+end
