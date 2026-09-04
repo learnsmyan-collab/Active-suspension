@@ -9,7 +9,7 @@
 * Plant model utilizes modular subsystems to manage feedback loops and signal propagation.
 * Model visualization asset:
 
-![Simulink Block Diagram](outputs/active_suspension_model.png)
+![Simulink Block Diagram](outputs/active_suspension.png)
 
 ## 3. Execution & Verification Workflow
 * Pre-execution workspace validation executed via initialization script (`active_code.m`).
