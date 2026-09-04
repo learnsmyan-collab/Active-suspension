@@ -20,9 +20,9 @@ kd = 0.2;   % derivative gain
 ki = 0.5;   % integral gain
 
 % setup the disturbance input structure for simulink
-inputDataStrucutre.time = (0:0.01:10)';
-inputDataStrucutre.signals(1).values = sin(inputDataStrucutre.time);
-inputDataStrucutre.signals(1).dimensions = 1;
+inputDataStructre.time = (0:0.01:10)';
+inputDataStructre.signals(1).values = sin(inputDataStructre.time);
+inputDataStructre.signals(1).dimensions = 1;
 
 % quick check to make sure everything actually loaded into memory
 required_vars = {'m', 'b', 'c', 'G', 'kp', 'kd', 'ki', 'inputDataStrucutre'};
