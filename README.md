@@ -16,7 +16,7 @@
 * Data logging configured using Simulink `Dataset` logging format for programmatic post-processing.
 * Transient response waveform exported at 300 DPI resolution:
 
-![System Response Scope](assets/active_suspension_response.png)
+![System Response Scope](assets/ScopeactiveToFigure.png)
 
 ## 4. Repository Directory Structure
 ```text
