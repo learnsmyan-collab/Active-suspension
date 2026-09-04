@@ -9,14 +9,14 @@
 * Plant model utilizes modular subsystems to manage feedback loops and signal propagation.
 * Model visualization asset:
 
-![Simulink Block Diagram](assets/active_suspension_model.png)
+![Simulink Block Diagram](outputs/active_suspension_model.png)
 
 ## 3. Execution & Verification Workflow
 * Pre-execution workspace validation executed via initialization script (`active_code.m`).
 * Data logging configured using Simulink `Dataset` logging format for programmatic post-processing.
 * Transient response waveform exported at 300 DPI resolution:
 
-![System Response Scope](assets/ScopeactiveToFigure.png)
+![System Response Scope](outputs/ScopeactiveToFigure.png)
 
 ## 4. Repository Directory Structure
 ```text
