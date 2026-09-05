@@ -1,22 +1,24 @@
-% setup quarter-car model & pid controller for simulink
+% setup quarter-car model & check suspension parameters
 % author: smyan aggarwal
 
-clear; clc;
-
-% system specs
+% system specs (quarter-car)
 ms = 250;       % sprung mass, kg
 m_us = 45;      % unsprung mass, kg
-ks = 15000;     % spring rate
-c = 1000;       % damper coefficient
+ks = 15000;     % spring rate, N/m
+c = 1000;       % damper coefficient, N s/m
 b = 1000;       % auxiliary coefficient
 
-% pid gains for active control
+% pid gains for active control loop
 kp = 100;
 ki = 50;
 kd = 10;
 
-% road disturbance inputs (sine wave bump)
-amp = 0.05; 
-freq = 2.0; 
+% road disturbance profile (sine wave)
+amp = 0.05;     % meters
+freq = 2.0;     % rad/s
 
-fprintf('workspace loaded. ready to run simulink.\n');
+% quick sanity check on system dynamics before hitting simulink
+omega_n = sqrt(ks / ms);         % natural frequency (rad/s)
+zeta = c / (2 * sqrt(ks * ms));  % damping ratio
+
+fprintf('model initialized. body natural freq: %.2f rad/s, damping ratio: %.2f\n', omega_n, zeta);
