@@ -3,7 +3,7 @@
 
 % system specs (quarter-car)
 ms = 250;       % sprung mass, kg
-m_us = 45;      % unsprung mass, kg
+cs = 45;      % unsprung mass, kg
 ks = 15000;     % spring rate, N/m
 c = 1000;       % damper coefficient, N s/m
 b = 1000;       % auxiliary coefficient
