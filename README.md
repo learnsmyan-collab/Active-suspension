@@ -1,42 +1,33 @@
-# Active Suspension Control System (PID & System Dynamics)
+# Quarter-Car Active Suspension & PID Control Framework
 
-## 1. System Overview
-* Repository implements a closed-loop Proportional-Integral-Derivative (PID) control architecture coupled with a vehicle dynamics plant model.
-* Simulation environment: MATLAB/Simulink.
-* Primary objective: Suppress transient vibration profiles and optimize mechanical system settling time.
+A MATLAB and Simulink model built to simulate a 2-DOF quarter-car suspension setup. The goal here was to test how well an active PID control loop suppresses transient body vibration and handles road bump inputs compared to a passive setup.
 
-## 2. System Architecture
-* Plant model utilizes modular subsystems to manage feedback loops and signal propagation.
-* Model visualization asset:
+## System Performance & Parameters
+* **Sprung Mass ($m_s$):** 250 kg 
+* **Unsprung Mass ($m_{us}$):** 45 kg
+* **Body Natural Frequency ($\omega_n$):** $7.75 \text{ rad/s}$
+* **Damping Ratio ($\zeta$):** $0.18$ (Underdamped configuration tuned for active feedback)
 
-![Simulink Block Diagram](outputs/active_simulink.png)
+## Repository Layout
+* `suspension.m`: Initialization script. Sets up vehicle constants, defines governing equations, runs a quick frequency check, and previews the analytical response.
+* `suspension_model.slx`: Simulink block diagram containing the multi-DOF physics loop and feedback controller.
 
-## 3. Execution & Verification Workflow
-* Pre-execution workspace validation executed via initialization script (`active_code.m`).
-* Data logging configured using Simulink `Dataset` logging format for programmatic post-processing.
-* Transient response waveform exported at 300 DPI resolution:
+## Governing Equations
+The physical model relies on standard 2-DOF equations of motion:
 
-![System Response Scope](outputs/ScopeactiveToFigure.png)
+* **Sprung Mass (Chassis):**
+  $$m_s \ddot{x}_s = -k_s(x_s - x_u) - c(\dot{x}_s - \dot{x}_u) + u$$
 
-## 4. Repository Directory Structure
+* **Unsprung Mass (Wheel):**
+  $$m_{us} \ddot{x}_{us} = k_s(x_s - x_u) + c(\dot{x}_s - \dot{x}_u) - k_t(x_u - x_r)$$
 
-├── assets/
-│   ├── active_suspension_model.png     # Architectural block diagram export
-│   └── active_suspension_response.png  # High-resolution time-series response
-├── active_code.m                       # Parameter initialization & workspace verification
-├── active.slx                          # Simulink plant and controller model
-└── README.md                           # Technical documentation
+## Simulation Outputs
 
-# quarter-car suspension & pid control
-
-simulink & matlab setup for a quarter-car suspension model with a basic active pid controller. built to test ride comfort and suspension response against road bumps.
-
-## what's in here
-- `suspension.m`: self-contained script that documents the governing equations, sets up vehicle constants, runs a natural frequency/damping check, and plots an analytical response preview.
-- ![System Response Scope](outputs/ScopesuspensionToFigure.png)
-- `suspension_model.slx`: block diagram handling the multi-degree-of-freedom physics loop and control feedback.
+### Simulink Block Diagram
 ![Simulink Block Diagram](outputs/suspension_simulink.png)
 
+### Transient Response Scope
+![System Response Scope](outputs/ScopesuspensionToFigure.png)
 ## governing equations
 the model is built on standard 2-dof quarter-car equations of motion:
 - **sprung mass (chassis):** $m_s \ddot{x}_s = -k_s(x_s - x_u) - c(\dot{x}_s - \dot{x}_u) + u$
