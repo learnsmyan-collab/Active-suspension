@@ -25,7 +25,7 @@ inputDataStructre.signals(1).values = sin(inputDataStructre.time);
 inputDataStructre.signals(1).dimensions = 1;
 
 % quick check to make sure everything actually loaded into memory
-required_vars = {'m', 'b', 'c', 'G', 'kp', 'kd', 'ki', 'inputDataStrucutre'};
+required_vars = {'m', 'b', 'c', 'G', 'kp', 'kd', 'ki', 'inputDataStructre'};
 missing_vars = {};
 
 for i = 1:length(required_vars)
