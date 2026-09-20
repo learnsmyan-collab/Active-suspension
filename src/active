@@ -1,44 +1,88 @@
 %==========================================================================
-% Project: Vehicle Dynamics & PID Control Integration
-% Description: Defines physical system parameters, controller gains, 
-%              and structured input signals for the Simulink plant model.
+% Project: Vehicle Dynamics & Active Suspension Control
+% Description: 2-DOF quarter-car model, passive baseline vs. active
+%              (velocity-feedback / "skyhook") control, under a road
+%              step disturbance. Reports peak chassis displacement
+%              reduction and settling time.
 % Author: Smyan Aggarwal
 % Date: 2026-07-05
 %==========================================================================
 
-clear; clc;
+clear; clc; close all;
 
-% physical system setup
-m = 8;      % mass (kg)
-b = 10;     % damping coefficient
-c = 5;      % spring constant
+% --- physical system parameters (quarter-car) ---
+ms  = 250;      % sprung mass, kg   (chassis)
+mus = 45;       % unsprung mass, kg (wheel)
+ks  = 15000;    % suspension spring rate, N/m
+c   = 1000;     % suspension damper coefficient, N*s/m
+kt  = 150000;   % tire stiffness, N/m
 
-% controller gains & force tuning
-G  = 10000; % overall force gain
-kp = 10;    % proportional gain
-kd = 0.2;   % derivative gain
-ki = 0.5;   % integral gain
+% --- active control gain (velocity-feedback / skyhook) ---
+Cs  = 2200;     % active damping gain, N*s/m
 
-% setup the disturbance input structure for simulink
-inputDataStructre.time = (0:0.01:10)';
-inputDataStructre.signals(1).values = sin(inputDataStructre.time);
-inputDataStructre.signals(1).dimensions = 1;
+% --- road input: step disturbance ---
+road_step = 0.05;   % 5 cm bump
+road = @(t) road_step * (t >= 0);
 
-% quick check to make sure everything actually loaded into memory
-required_vars = {'m', 'b', 'c', 'G', 'kp', 'kd', 'ki', 'inputDataStructre'};
-missing_vars = {};
+% --- simulation settings ---
+tspan = [0 5];
+opts  = odeset('RelTol',1e-8,'AbsTol',1e-10,'MaxStep',0.0005);
 
-for i = 1:length(required_vars)
-    if ~evalin('base', sprintf('exist(''%s'', ''var'')', required_vars{i}))
-        missing_vars{end+1} = required_vars{i};
+% passive baseline: xs, vs, xu, vu
+passive_ode = @(t,y) [
+    y(2);
+    (-ks*(y(1)-y(3)) - c*(y(2)-y(4))) / ms;
+    y(4);
+    ( ks*(y(1)-y(3)) + c*(y(2)-y(4)) - kt*(y(3)-road(t)) ) / mus
+];
+
+% active: skyhook force opposes absolute chassis velocity
+active_ode = @(t,y) [
+    y(2);
+    (-ks*(y(1)-y(3)) - c*(y(2)-y(4)) - Cs*y(2)) / ms;
+    y(4);
+    ( ks*(y(1)-y(3)) + c*(y(2)-y(4)) - kt*(y(3)-road(t)) + Cs*y(2) ) / mus
+];
+
+[t_p, y_p] = ode45(passive_ode, tspan, [0 0 0 0], opts);
+[t_a, y_a] = ode45(active_ode,  tspan, [0 0 0 0], opts);
+
+xs_p = y_p(:,1);
+xs_a = y_a(:,1);
+
+% --- performance metrics ---
+peak_p = max(abs(xs_p));
+peak_a = max(abs(xs_a));
+reduction_pct = 100 * (1 - peak_a/peak_p);
+
+st_p = settling_time(t_p, xs_p, xs_p(end));
+st_a = settling_time(t_a, xs_a, xs_a(end));
+
+fprintf('\n--- Quarter-Car Active Suspension Results ---\n');
+fprintf('Passive peak displacement: %.4f m\n', peak_p);
+fprintf('Active  peak displacement: %.4f m\n', peak_a);
+fprintf('Peak displacement reduction: %.1f%%\n', reduction_pct);
+fprintf('Passive settling time: %.2f s\n', st_p);
+fprintf('Active  settling time: %.2f s\n', st_a);
+
+% --- plot ---
+fig = figure('Name','Quarter-Car Suspension Response','Position',[100 100 800 450]);
+plot(t_p, xs_p, 'b--', 'LineWidth', 1.8, 'DisplayName', 'Passive'); hold on;
+plot(t_a, xs_a, 'r-',  'LineWidth', 2.0, 'DisplayName', 'Active (skyhook)');
+xlabel('Time (s)'); ylabel('Chassis Displacement x_s (m)');
+title('Passive vs. Active Suspension \u2014 Step Road Disturbance');
+legend('Location','northeast'); grid on; box on;
+
+exportgraphics(fig, 'quarter_car_step_response.png', 'Resolution', 300);
+fprintf('\nExported: quarter_car_step_response.png\n');
+
+% --- helper: 2%% settling time ---
+function st = settling_time(t, x, final)
+    band = 0.02 * max(abs(final), eps);
+    idx  = find(abs(x - final) > band, 1, 'last');
+    if isempty(idx)
+        st = 0;
+    else
+        st = t(idx);
     end
-end
-
-% print out status in the command window
-fprintf('\n--- Workspace Check ---\n');
-if isempty(missing_vars)
-    fprintf('all variables are loaded and ready to go for simulink.\n');
-else
-    fprintf('heads up, these variables are missing:\n');
-    disp(missing_vars);
 end
