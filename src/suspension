@@ -2,18 +2,18 @@
 % author: smyan aggarwal
 
 % system specs (quarter-car)
-ms = 250;       % sprung mass, kg
-cs = 45;      % unsprung mass, kg
-ks = 15000;     % spring rate, N/m
-c = 1000;       % damper coefficient, N s/m
-b = 1000;       % auxiliary coefficient
+ms  = 250;      % sprung mass, kg
+mus = 45;       % unsprung mass, kg
+ks  = 15000;    % spring rate, N/m
+c   = 1000;     % damper coefficient, N s/m
 
-% pid gains for active control loop
-kp = 100;
-ki = 50;
-kd = 10;
+% active gain (skyhook, not PID -- see quarter_car_active.m for the
+% full passive vs active run and the step response results)
+Cs = 2200;
 
-% road disturbance profile (sine wave)
+% road disturbance profile (sine wave) -- just used below to sanity
+% check the passive dynamics, the real passive/active comparison uses
+% a step input instead (in quarter_car_active.m)
 amp = 0.05;     % meters
 freq = 2.0;     % rad/s
 
@@ -21,4 +21,4 @@ freq = 2.0;     % rad/s
 omega_n = sqrt(ks / ms);         % natural frequency (rad/s)
 zeta = c / (2 * sqrt(ks * ms));  % damping ratio
 
-fprintf('model initialized. body natural freq: %.2f rad/s, damping ratio: %.2f\n', omega_n, zeta);
+fprintf('model initialized. body natural freq: %.3f rad/s, damping ratio: %.3f\n', omega_n, zeta);
